@@ -3,7 +3,7 @@ set output "hash_comparison_read_time.png"
 set title "Comparing Hashes in Ruby, Perl, PHP: Read Time"
 set xlabel "Size of Hash"
 
-set xrange [100:1000000]
+set xrange [100:10000000]
 set logscale x
 
 set style line 1 lt 1 lc 3

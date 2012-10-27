@@ -3,7 +3,7 @@ set output "hash_comparison_write_time.png"
 set title "Comparing Hashes in Ruby, Perl, PHP: Write Time"
 set xlabel "Size of Hash"
 
-set xrange [100:1000000]
+set xrange [100:10000000]
 set logscale y
 set logscale x
 

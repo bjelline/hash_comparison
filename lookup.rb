@@ -1,5 +1,6 @@
 no = ARGV[0]
 dir = "data"
+no_of_test_data = 50
 
 unless no =~  /^\d+$/
   puts "how many lines should I use? please specify on the command line!"
@@ -8,8 +9,8 @@ end
 
 no = no.to_i
 
-if no > 1000000
-  puts "create more input data, only have a million lines!"
+if no > 10000000
+  puts "create more input data, only have 10 million lines!"
   exit
 end
 
@@ -43,21 +44,30 @@ data = ['ruby', no]
 before = get_memory_usage
 data.push(before)
 
-t0 = Time.now
 
 the_hash = Hash.new
 
 count = 0
+counted = false
 f = open( "#{dir}/input#{suffix}.txt")
+t0 = Time.now
 f.each do |l|
   name, number = l.chomp.split
   the_hash[name] = number
   count += 1
   break if count >= no
+  # only count the last 50 inserts
+  if count + no_of_test_data == no then
+    t0 = Time.now
+    counted = true
+  end
 end
 f.close
 
-
+if ! counted then
+  puts "could not measure time to load last #{no_of_test_data} lines of data"
+  exit
+end
 t1 = Time.now
 t = t1 - t0
 
@@ -67,7 +77,6 @@ data.push(after)
 data.push(after-before)
 data.push(t)
 
-no_of_test_data = 50
 
 positive = IO.readlines("#{dir}/input#{suffix}.txt").first(no_of_test_data).map{|l| l.split(/ /).first }
 negative = IO.readlines("#{dir}/negative#{suffix}.txt").map(&:chomp)

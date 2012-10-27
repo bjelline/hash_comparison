@@ -6,14 +6,16 @@ $dir = "data";
 $err_no = 0;
 @errors = ();
 $suffix = "-7";
+$no_test_data = 50;
+$max_repeat = 10000;
 
 $no = shift @ARGV;
 
 die("how many lines of data set should I use? please specify on the commandline")
   unless $no =~ m/^\d+$/;
 
-die("create more test data. I only have 1 million lines!")
-  if $no > 1000000;
+die("create more test data. I only have 10 million lines!")
+  if $no > 10000000;
 
 
 foreach $filename ( ("input$suffix.txt", "positive$suffix.txt", "negative$suffix.txt") ) {
@@ -38,16 +40,23 @@ $before = get_memory_usage();
 $count = 0;
 open($in, "$dir/input$suffix.txt") or die("cannot read!");
 
-$t0 = time();
+$counted = 0;
 while(<$in>){
   chomp;
   ($key, $value) = split / /;
   $hash{$key} = $value;
   $count++;
   last if $count >= $no;
+  # only count the last 50 inserts - when most of the has is already loaded
+  if( $count + $no_test_data == $no ) {
+    $counted = 1;
+     $t0 = time();
+  }
 }
 $t1 = time();
 close($in);
+
+die("could not measure the time to load last $no_test_data lines of data") unless $counted;
 
 $t = $t1 - $t0;
 $after = get_memory_usage();
@@ -56,11 +65,9 @@ push(@data, $after);
 push(@data, $after - $before);
 push(@data, $t);
 
-$no_of_test_data = 50;
-$max_repeat = 10000;
 
 push(@data, $max_repeat);
-push(@data, $no_of_test_data);
+push(@data, $no_test_data);
 
 
 open($in, "$dir/input$suffix.txt") or die("cannot read!");
@@ -69,7 +76,7 @@ while( <$in> ) {
   my($key, $value) = split / /;
   push(@positive, $key);
   $count++;
-  last if $count >= $no_of_test_data
+  last if $count >= $no_test_data
 }
 close($in);
 
@@ -78,8 +85,8 @@ open($in, "$dir/negative$suffix.txt") or die("cannot read!");
 chomp(@negative);
 close($in);
 
-die("i need $no_of_test_data lines of negative examples, not " +
-  scalar(@negative) ) if scalar(@negative) != $no_of_test_data ;
+die("i need $no_test_data lines of negative examples, not " +
+  scalar(@negative) ) if scalar(@negative) != $no_test_data ;
 
 $t0 = time();
 for ( $counter = 1; $counter <= $max_repeat; $counter += 1) {
