@@ -25,8 +25,14 @@ if( $err_no > 0 ) {
   die("Fehlende Dateien: " . join("\n", $errors));
 }
 
+function get_memory_usage(){
+  $pid = getmypid();
+  return 0 + `ps -o rss= -p $pid`;
+}
 
-$t0 = time();
+$before = get_memory_usage();
+
+$t0 = microtime(true);
 
 $hash = array();
 $in = fopen( "$dir/input$no.txt", "r" ) or die("cannot read!");
@@ -39,43 +45,43 @@ while( $l = fgets($in) ){
 }
 fclose($in);
 
-$t1 = time();
+$t1 = microtime(true);
 $t = $t1 - $t0;
 
 print "READ: $t\n";
 
-print "MEM: " . floor((memory_get_usage() / 1024)/1024) . "MB \n";
+$after = get_memory_usage();
+$mem = $after - $before;
+print "MEM: $mem\n";
 
-$t0 = time();
 
-$in = fopen("$dir/positive$no.txt", "r") or die("cannot read!");
-while($l = fgets($in)){
-  $l = rtrim($l);
-  if(! array_key_exists( $l, $hash ) ) {
-    print "could not find $l!\n";
+$positive = file("$dir/positive$no.txt", FILE_IGNORE_NEW_LINES) or die("cannot read positive!");
+$negative = file("$dir/negative$no.txt", FILE_IGNORE_NEW_LINES) or die("cannot read negative!");
+
+
+$t0 = microtime(true);
+$max_repeat = 10000;
+for ( $counter = 1; $counter <= $max_repeat; $counter += 1) {
+  foreach( $positive as $l )  {
+    if(! array_key_exists( $l, $hash ) ) {
+      die("could not find $l!\n");
+    }
   }
 }
-fclose($in);
-
-$t1 = time();
+$t1 = microtime(true);
 $t = $t1 - $t0;
 
 print "POSITIVE: $t\n";
 
-
-
-$t0 = time();
-
-$in = fopen("$dir/negative$no.txt", "r") or die("cannot read!");
-while( $l = fgets($in) ){
-  $l = rtrim($l);
-  if(array_key_exists( $l, $hash) ) {
-    die("found $l!\n");
+$t0 = microtime(true);
+for ( $counter = 1; $counter <= $max_repeat; $counter += 1) {
+  foreach( $negative as $l )  {
+    if(array_key_exists( $l, $hash) ) {
+      die("found $l!\n");
+    }
   }
 }
-fclose($in);
-
-$t1 = time();
+$t1 = microtime(true);
 $t = $t1 - $t0;
 
 print "NEGATIVE: $t\n";

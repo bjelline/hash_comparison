@@ -26,6 +26,11 @@ if err_no > 0
   exit
 end
 
+def get_memory_usage
+  `ps -o rss= -p #{Process.pid}`.to_i
+end
+
+before = get_memory_usage
 
 t0 = Time.now
 
@@ -43,20 +48,26 @@ t1 = Time.now
 t = t1 - t0
 
 puts "READ: #{t}"
+after = get_memory_usage
+
+puts "MEM: #{after-before}"
+
+
+positive = IO.readlines("#{dir}/positive#{no}.txt").map(&:chomp)
+negative = IO.readlines("#{dir}/negative#{no}.txt").map(&:chomp)
+
+max_repeat = 10000
+
 
 t0 = Time.now
-
-
-f = open "#{dir}/positive#{no}.txt"
-f.each do |name|
-  name.chomp!
-  unless the_hash.has_key?( name )
-    puts "could not find #{name}!"
-    exit
+max_repeat.times do 
+  positive.each do |name|
+    unless the_hash.has_key?( name )
+      puts "could not find #{name}!"
+      exit
+    end
   end
 end
-f.close
-
 t1 = Time.now
 t = t1 - t0
 
@@ -66,16 +77,14 @@ puts "POSITIVE: #{t}"
 
 t0 = Time.now
 
-f = open "#{dir}/negative#{no}.txt" 
-f.each do |name|
-  name.chomp!
-  if the_hash.has_key?( name )
-     puts "found #{name}!"
-     exit
+max_repeat.times do 
+  negative.each do |name|
+    if the_hash.has_key?( name )
+       puts "found #{name}!"
+       exit
+    end
   end
 end
-f.close
-
 t1 = Time.now
 t = t1 - t0
 
