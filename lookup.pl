@@ -108,5 +108,5 @@ $t = $t1 - $t0;
 
 push(@data, $t);
 
-print join(";", @data) . "\n";
+print join(" ", @data) . "\n";
 

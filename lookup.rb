@@ -110,4 +110,4 @@ t = t1 - t0
 data.push(t)
 
 
-puts data.join(";")
+puts data.join(" ")

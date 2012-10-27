@@ -115,5 +115,5 @@ $t = $t1 - $t0;
 $data[]=$t;
 
 
-echo( join($data, ";") );
+echo( join($data, " ") );
 echo( "\n" );
