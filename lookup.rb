@@ -1,6 +1,30 @@
-no = ARGV[0]
-dir = "#{File.dirname(__FILE__)}/data"
-no_of_test_data = 50
+#
+# lookup.rb - Memory and Performance Test for Ruby Hashes
+#
+=begin
+
+ Copyright (C) 2012 Brigitte Jellinek <code@brigitte-jellinek.at>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+=end
+
+
+             no = ARGV[0]                            # number of keys+values to read into hash
+            dir = "#{File.dirname(__FILE__)}/data"   # absolute path to data directory
+no_of_test_data = 50                                 # number of keys+values to read from hash
+     max_repeat = 10000                              # no of repeats of read operations (times no_of_test_data!)
 
 unless no =~  /^\d+$/
   puts "how many lines should I use? please specify on the command line!"
@@ -14,13 +38,11 @@ if no > 10000000
   exit
 end
 
-suffix = "-7"
-
 err_no = 0
 errors = []
 
 
-["input#{suffix}.txt", "positive#{suffix}.txt", "negative#{suffix}.txt"].each do |filename|
+["input.txt",  "negative.txt"].each do |filename|
   unless File.exists?("#{dir}/#{filename}")
     err_no += 1
     errors.push "Cannot read file #{filename} from folder #{dir}."
@@ -49,7 +71,7 @@ the_hash = Hash.new
 
 count = 0
 counted = false
-f = open( "#{dir}/input#{suffix}.txt")
+f = open( "#{dir}/input.txt")
 t0 = Time.now
 f.each do |l|
   name, number = l.chomp.split
@@ -78,11 +100,10 @@ data.push(after-before)
 data.push(t)
 
 
-positive = IO.readlines("#{dir}/input#{suffix}.txt").first(no_of_test_data).map{|l| l.split(/ /).first }
-negative = IO.readlines("#{dir}/negative#{suffix}.txt").map(&:chomp)
+positive = IO.readlines("#{dir}/input.txt").first(no_of_test_data).map{|l| l.split(/ /).first }
+negative = IO.readlines("#{dir}/negative.txt").map(&:chomp)
 
 die("should have #{no_of_test_data} negative examples, not #{negative.count}!") unless negative.count==no_of_test_data
-max_repeat = 10000
 
 data.push(max_repeat)
 data.push(no_of_test_data)

@@ -21,9 +21,9 @@ results-perl.csv: ../lookup.pl
 	perl ../lookup.pl 10000000 >> results-perl.csv
 	
 results-php.csv: ../lookup.php
-	php ../lookup.php 100      > results-php.csv
-	php ../lookup.php 1000     >> results-php.csv
-	php ../lookup.php 10000    >> results-php.csv
-	php ../lookup.php 100000   >> results-php.csv
-	php ../lookup.php 1000000  >> results-php.csv
+	php -n ../lookup.php 100      > results-php.csv
+	php -n ../lookup.php 1000     >> results-php.csv
+	php -n ../lookup.php 10000    >> results-php.csv
+	php -n ../lookup.php 100000   >> results-php.csv
+	php -n ../lookup.php 1000000  >> results-php.csv
 	

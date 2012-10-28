@@ -1,18 +1,39 @@
-#!/usr/bin/perl
+#
+# lookup.pl - Memory and Performance Test for Perl Hashes
+#
+=begin COMMENT
+
+ Copyright (C) 2012 Brigitte Jellinek <code@brigitte-jellinek.at>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+=end COMMENT
+
+=cut
 
 use Time::HiRes ('time');
-
 use File::Basename;
-my $dirname = dirname(__FILE__);
 
-$dir = "$dirname/data";
-$err_no = 0;
-@errors = ();
-$suffix = "-7";
-$no_test_data = 50;
-$max_repeat = 10000;
+my $dirname = dirname(__FILE__);  # absolute path of this program
+my $dir     = "$dirname/data";    # absolute path of data
+my $err_no = 0;
+my @errors = ();
 
-$no = shift @ARGV;
+my $no = shift @ARGV;    # size of hash
+my $no_test_data = 50;   # no of keys/values to read 
+my $max_repeat = 10000;  # no of repetitions of read operation (times no_test_data)
+
 
 die("how many lines of data set should I use? please specify on the commandline")
   unless $no =~ m/^\d+$/;
@@ -21,7 +42,7 @@ die("create more test data. I only have 10 million lines!")
   if $no > 10000000;
 
 
-foreach $filename ( ("input$suffix.txt", "positive$suffix.txt", "negative$suffix.txt") ) {
+foreach $filename ( ("input.txt", "negative.txt") ) {
   if( ! -r "$dir/$filename" ) {
     $err_no ++;
     push(@errors, "Kann die Datei $filename nicht finden.");
@@ -36,12 +57,13 @@ sub get_memory_usage {
   0 + `ps -o rss= -p $$`
 }
 
+
 $before = get_memory_usage();
 @data = ("perl", $no, $before);
 
 
 $count = 0;
-open($in, "$dir/input$suffix.txt") or die("cannot read!");
+open(my $in, "$dir/input.txt") or die("cannot read!");
 
 $counted = 0;
 while(<$in>){
@@ -73,7 +95,7 @@ push(@data, $max_repeat);
 push(@data, $no_test_data);
 
 
-open($in, "$dir/input$suffix.txt") or die("cannot read!");
+open($in, "$dir/input.txt") or die("cannot read!");
 $count = 0;
 while( <$in> ) {
   my($key, $value) = split / /;
@@ -83,7 +105,7 @@ while( <$in> ) {
 }
 close($in);
 
-open($in, "$dir/negative$suffix.txt") or die("cannot read!");
+open($in, "$dir/negative.txt") or die("cannot read!");
 @negative = <$in>;
 chomp(@negative);
 close($in);

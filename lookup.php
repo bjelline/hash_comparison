@@ -1,10 +1,33 @@
 <?php
+/*
 
-$dir = dirname(__FILE__) . "/data";
-$suffix = "-7";
-$no_test_data = 50;
-$err_no = 0;
-$errors = Array();
+ lookup.php - Memory and Performance Test for Ruby Hashes
+
+ Copyright (C) 2012 Brigitte Jellinek <code@brigitte-jellinek.at>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
+
+$dir          = dirname(__FILE__) . "/data";  // absolute path to data diri
+$no_test_data = 50;                           // no of lines to read
+$max_repeat   = 10000;                        // no of repetitions for read operations (times no_test_data)
+
+
+$err_no       = 0;
+$errors       = Array();
 
 ini_set('memory_limit', -1);
 $no = $argv[1];
@@ -18,7 +41,7 @@ if($no > 10000000) die("create more test data. I only have 10 million lines!");
 
 
 
-foreach( array("input$suffix.txt", "positive$suffix.txt", "negative$suffix.txt")  as $filename ) {
+foreach( array("input.txt", "negative.txt")  as $filename ) {
   if( ! is_file("$dir/$filename") ) {
     $err_no ++;
     $errors[] =  "cannot find file $filename in $dir.";
@@ -42,7 +65,7 @@ $data[]=$before;
 
 
 $hash = array();
-$in = fopen( "$dir/input$suffix.txt", "r" ) or die("cannot read!");
+$in = fopen( "$dir/input.txt", "r" ) or die("cannot read!");
 
 $count = 0;
 $counted = false;
@@ -74,7 +97,7 @@ $data[]=$mem;
 $data[]=$t;
 
 
-$in = fopen( "$dir/input$suffix.txt", "r" ) or die("cannot read!");
+$in = fopen( "$dir/input.txt", "r" ) or die("cannot read!");
 $count = 0;
 $t0 = microtime(true);
 while( $l = fgets($in) ){
@@ -89,9 +112,8 @@ while( $l = fgets($in) ){
 fclose($in);
 
 
-$negative = file("$dir/negative$suffix.txt", FILE_IGNORE_NEW_LINES) or die("cannot read negative!");
+$negative = file("$dir/negative.txt", FILE_IGNORE_NEW_LINES) or die("cannot read negative!");
 
-$max_repeat = 10000;
 
 $data[]=$max_repeat;
 $data[]=$no_test_data;
