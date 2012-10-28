@@ -2,7 +2,10 @@
 
 use Time::HiRes ('time');
 
-$dir = "data";
+use File::Basename;
+my $dirname = dirname(__FILE__);
+
+$dir = "$dirname/data";
 $err_no = 0;
 @errors = ();
 $suffix = "-7";

@@ -1,6 +1,6 @@
 <?php
 
-$dir = "data";
+$dir = dirname(__FILE__) . "/data";
 $suffix = "-7";
 $no_test_data = 50;
 $err_no = 0;

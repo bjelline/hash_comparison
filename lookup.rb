@@ -1,5 +1,5 @@
 no = ARGV[0]
-dir = "data"
+dir = "#{File.dirname(__FILE__)}/data"
 no_of_test_data = 50
 
 unless no =~  /^\d+$/
